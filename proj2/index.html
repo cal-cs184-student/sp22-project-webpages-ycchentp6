@@ -1,7 +1,514 @@
-<html>
-	<head>
-	</head>
-	<body>
-		Project 2 here
-	</body>
-</html>
+
+<head>
+    <style>
+        body {
+            padding: 100px;
+            width: 1000px;
+            margin: auto;
+            text-align: left;
+            font-weight: 300;
+            font-family: 'Open Sans', sans-serif;
+            color: #121212;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: 'Source Sans Pro', sans-serif;
+        }
+    </style>
+    <title>CS 184 Mesh Editor</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet" />
+</head>
+
+<body>
+
+    <p style='margin-right:0cm;margin-left:0cm;font-size:15px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'><strong><span style='font-size:32px;font-family:"Calibri",sans-serif;color:#121212;'>CS 284: Foundations of Computer Graphics, Spring 2022</span></strong></p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:15px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'><strong><span style='font-size:32px;font-family:"Calibri",sans-serif;color:#121212;'>&nbsp;</span></strong></p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:15px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'><strong><span style='font-size:32px;font-family:"Calibri",sans-serif;color:#121212;'>Project 2: Mesh Editor</span></strong></p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:15px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'><strong><span style='font-size:32px;font-family:"Calibri",sans-serif;color:#121212;'>&nbsp;</span></strong></p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:15px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'><strong><span style='font-size:24px;font-family:"Calibri",sans-serif;color:#121212;'>Yi-Chen Chen, p2-meshedit-sp22-sushi</span></strong></p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:15px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'><strong><span style='font-size:24px;font-family:"Calibri",sans-serif;color:#121212;'>&nbsp;</span></strong></p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'>This site is published at: <a href="https://cal-cs184-student.github.io/sp22-project-webpages-ycchentp6/proj2/index.html">https://cal-cs184-student.github.io/sp22-project-webpages-ycchentp6/proj2/index.html</a>.</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:15px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'><span style='font-size:18px;font-family:"Calibri",sans-serif;color:#121212;'>&nbsp;</span></p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:24px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;font-weight:bold;'>Overview</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>The description of this project can be found <a href="https://cs184.eecs.berkeley.edu/sp22/docs/proj2">here</a>.</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>In this assignment, I build Bezier curves and Bezier surfaces using de Casteljau algorithm, manipulate triangle meshes represented by half-edge data structure, and implement loop subdivision.</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:24px;font-family:"Calibri",sans-serif;margin:0cm;margin-bottom:.0001pt;line-height:107%;font-weight:bold;'>Section I: Bezier Curves and Surfaces</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:24px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;font-weight:bold;'>Part 1: Bezier Curves with 1D de Casteljau Subdivision</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'><strong>De Casteljau&apos;s algorithm</strong> is a recursive method to evaluate B&eacute;zier curves. The algorithm consists of the following steps (<a href="https://en.wikipedia.org/wiki/De_Casteljau%27s_algorithm">reference1</a>, <a href="https://cs184.eecs.berkeley.edu/sp22/lecture/7-61/intro-to-geometry-splines-and-be">reference2</a>):</p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 431.5pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/1-9.png" align="middle" width="1000px" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'>De Casteljau&apos;s algorithm.</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>I implement a helper function&nbsp;<span style='font-family:"Calibri Light",sans-serif;background:#E5E5E5;font-style:italic;'>lerp</span> to compute the linearly interpolated points. This&nbsp;<span style='font-family:"Calibri Light",sans-serif;background:#E5E5E5;font-style:italic;'>lerp</span> function is called recursively until we arrive at a final, single point. The final point lies on the Bezier curve&nbsp;at the given parameter <span style='font-family:"Calibri Light",sans-serif;background:#E5E5E5;font-style:italic;'>t</span>.</p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 143.85pt; border: 1pt solid windowtext; padding: 0cm 5.4pt; vertical-align: top;">
+                        <img src="images/1-10.png" align="middle" width="500px" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'>Recursively calling lerp function. (a, b, c, d are the 4 black controlling points)</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 143.85pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/1-7.png" align="middle" width="500px" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 143.8pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/1-1.png" align="middle" width="300px" />
+                    </td>
+                    <td style="width: 143.85pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/1-2.png" align="middle" width="300px" />
+                    </td>
+                    <td style="width: 143.85pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/1-3.png" align="middle" width="300px" />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 143.8pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/1-4.png" align="middle" width="300px" />
+                    </td>
+                    <td style="width: 143.85pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/1-5.png" align="middle" width="300px" />
+                    </td>
+                    <td style="width: 143.85pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/1-6.png" align="middle" width="300px" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>Screenshots of a Bezier curve with 6 control points and each step/level of the evaluation from the original control points down to the final evaluated point.</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 143.85pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/1-8.png" align="middle" width="500px" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'>A slightly different Bezier curve with different control points and parameter <span style='font-family:"Calibri Light",sans-serif;background:#E5E5E5;font-style:italic;'>t</span>.</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:24px;font-family:"Calibri",sans-serif;margin:0cm;margin-bottom:.0001pt;line-height:107%;font-weight:bold;'>&nbsp;</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:24px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;font-weight:bold;'>Part2: Bezier Surfaces with Separable 1D de Casteljau</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>De Casteljau&apos;s algorithm can be extends to Bezier surfaces. Here is a <a href="https://cs184.eecs.berkeley.edu/sp19/lecture/7-90/geometry-and-splines">slide</a> that shows how it works.</p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 431.5pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/2-2.jpg" align="middle" width="500px" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>My implementation:</p>
+    <ol style="list-style-type: decimal;margin-left:26px;">
+        <li>Loop through every 1D Bezier curve and its control points. For each Bezier curve, get the final, single, linearly interpolated point (just as what we do in Part 1).</li>
+        <li>Store all the points (one point per 1D Bezier curve) to a vector <span style='font-family:"Calibri Light",sans-serif;background:#E5E5E5;font-style:italic;'>moving_bezier_curve</span>.</li>
+        <li>Get the final, single, linearly interpolated point of this <span style='font-family:"Calibri Light",sans-serif;background:#E5E5E5;font-style:italic;'>moving_bezier_curve</span>.</li>
+    </ol>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 431.5pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/2-1.png" align="middle" width="500px" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'>Teapot evaluated by the De Casteljau&apos;s algorithm.</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'>&nbsp;</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:24px;font-family:"Calibri",sans-serif;margin:0cm;margin-bottom:.0001pt;line-height:107%;font-weight:bold;'>Section II: Triangle Meshes and Half-Edge Data Structure</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:24px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;font-weight:bold;'>Part 3: Area-Weighted Vertex Normals</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>My implementation to get area-weighted vertex normals:</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>* A (unit) normal is a vector that is perpendicular to a face/vertex.</p>
+    <ol style="list-style-type: decimal;margin-left:26px;">
+        <li>Use the half-edge data structure to iterate through neighboring faces (triangles) of the given vertex, i.e., faces that have the given vertex as one of its vertices.</li>
+        <li>For each triangle, get the area of that triangle by calculating the cross product of the two boundaries of that triangle.</li>
+        <li>After looping through all neighboring triangles and getting their areas, you have the sum of the areas of all neighboring triangles. You can now normalize the sum to get an area-weighted normal.</li>
+    </ol>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 215.75pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/3-1.png" align="middle" width="500px" />
+                    </td>
+                    <td style="width: 215.75pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/3-2.png" align="middle" width="500px" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'>Teapot shading with (right, Phong shading) and without (left, flat shading) vertex normals.</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:24px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;font-weight:bold;'>Part 4: Edge Flip</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>My implementation for the edge flip operation:</p>
+    <ol style="list-style-type: decimal;margin-left:26px;">
+        <li>Draw a simple mesh, and write down a list of all elements. Initialize a variable for each of those elements. (See the image on the left.)</li>
+        <li>
+            Draw the mesh after the edge flip operation, and write down a list of all elements in the new modified mesh. (See the image on the right.)<ol style="list-style-type: lower-alpha;">
+                <li>For each vertex, edge, and face, set its <span style='font-family:"Calibri Light",sans-serif;background:#E5E5E5;font-style:italic;'>halfedge</span> pointer to the correct element in the modified mesh.</li>
+                <li>For each half-edge, set its <span style='font-family:"Calibri Light",sans-serif;background:#E5E5E5;font-style:italic;'>next</span>, <span style='font-family:"Calibri Light",sans-serif;background:#E5E5E5;font-style:italic;'>twin</span>, <span style='font-family:"Calibri Light",sans-serif;background:#E5E5E5;font-style:italic;'>vertex</span>, <span style='font-family:"Calibri Light",sans-serif;background:#E5E5E5;font-style:italic;'>edge</span>, and <span style='font-family:"Calibri Light",sans-serif;background:#E5E5E5;font-style:italic;'>face</span> pointer to the correct element in the modified mesh using <span style='font-family:"Calibri Light",sans-serif;background:#E5E5E5;font-style:italic;'>Halfedge::setNeighbors(...)</span>.</li>
+            </ol>
+        </li>
+    </ol>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 215.75pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/4-3.jpg" align="middle" width="500px" />
+                    </td>
+                    <td style="width: 215.75pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/4-4.jpg" align="middle" width="500px" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'>Left: a simple mesh and all of its elements. Right: the mesh and all of its elements after the edge flip operation.</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'>&nbsp;</p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 215.75pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/4-1.png" align="middle" width="500px" />
+                    </td>
+                    <td style="width: 215.75pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/4-2.png" align="middle" width="500px" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'>The teapot before (left) and after (right) some edge flips.</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:24px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;font-weight:bold;'>Part 5: Edge Split</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>My implementation for the edge split operation:</p>
+    <ol style="list-style-type: decimal;margin-left:26px;">
+        <li>Draw a simple mesh, and write down a list of all elements. Initialize a variable for each of those elements. (See the image on the left.)</li>
+        <li>
+            Draw the mesh after the edge split operation, and write down a list of all elements in the new modified mesh. (See the image on the right.)<ol style="list-style-type: lower-alpha;">
+                <li>There are 1 new vertex, 2 new faces, 3 new edges, 6 new halfedges.</li>
+                <li>Assign the position of the new vertex m to the midpoint of the original edge.</li>
+                <li>For each vertex, edge, and face, set its <span style='font-family:"Calibri Light",sans-serif;background:#E5E5E5;font-style:italic;'>halfedge</span> pointer to the correct element in the modified mesh.</li>
+                <li>For each half-edge, set its <span style='font-family:"Calibri Light",sans-serif;background:#E5E5E5;font-style:italic;'>next</span>, <span style='font-family:"Calibri Light",sans-serif;background:#E5E5E5;font-style:italic;'>twin</span>, <span style='font-family:"Calibri Light",sans-serif;background:#E5E5E5;font-style:italic;'>vertex</span>, <span style='font-family:"Calibri Light",sans-serif;background:#E5E5E5;font-style:italic;'>edge</span>, and <span style='font-family:"Calibri Light",sans-serif;background:#E5E5E5;font-style:italic;'>face</span> pointer to the correct element in the modified mesh using <span style='font-family:"Calibri Light",sans-serif;background:#E5E5E5;font-style:italic;'>Halfedge::setNeighbors(...)</span>.</li>
+            </ol>
+        </li>
+    </ol>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 215.75pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/5-8.jpg" align="middle" width="500px" />
+                    </td>
+                    <td style="width: 215.75pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/5-9.jpg" align="middle" width="500px" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'>Left: a simple mesh and all of its elements. Right: the mesh and all of its elements after the edge split operation.</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'>&nbsp;</p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 143.8pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/5-1.png" align="middle" width="300px" />
+                    </td>
+                    <td style="width: 143.85pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/5-2.png" align="middle" width="300px" />
+                    </td>
+                    <td style="width: 143.85pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/5-3.png" align="middle" width="300px" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'>A mesh before (left) and after (middle, right) some edge splits.</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'>&nbsp;</p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 215.75pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/5-4.png" align="middle" width="300px" />
+                    </td>
+                    <td style="width: 215.75pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/5-5.png" align="middle" width="300px" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'>A mesh before (left) and after (right) a combination of both edge flips and edge splits.</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:24px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;font-weight:bold;'><span style="font-size:19px;line-height:107%;">Extra Credit: Implement edge splits for boundary edges.</span></p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 215.75pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/5-6.png" align="middle" width="500px" />
+                    </td>
+                    <td style="width: 215.75pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/5-7.png" align="middle" width="500px" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'>A mesh before (left) and after (right) some edge split operations on boundary edges.</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+
+
+
+
+
+    <p style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:24px;font-family:"Calibri",sans-serif;font-weight:bold;'>Part 6: Loop Subdivision for Mesh Upsampling</p>
+    <p style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:18px;font-family:"Calibri",sans-serif;'>My implementation for loop subdivision:</p>
+    <table style="border-collapse:collapse;border:none;" >
+        <tbody >
+            <tr>
+            <tr>
+                <td style="width: 143.8pt;padding: 0cm 5.4pt;vertical-align: top;">
+                    
+                </td>
+                <td style="width: 143.85pt;padding: 0cm 5.4pt;vertical-align: top;">
+                    <img src="images/6-15.jpg" align="middle" width="600px" />
+                </td>
+                <td style="width: 143.85pt;padding: 0cm 5.4pt;vertical-align: top;">
+                    
+                </td>
+            </tr>
+            </tr>
+        </tbody>
+    </table>
+    <ol style="list-style-type: decimal;margin-left:26px;">
+        <li>
+            Compute new positions for all the vertices in the input mesh, using the loop subdivision rule. (See the &ldquo;Old vertex&rdquo; graph above.)<ol style="list-style-type: lower-alpha;">
+                <li>I implement a function, <span style='font-family:"Calibri Light",sans-serif;background:#E5E5E5;font-style:italic;'>oldVertexNewPosition(old_vertex)</span>, and store the new position in <span style='font-family:"Calibri Light",sans-serif;background:#E5E5E5;font-style:italic;'>old_vertex-&gt;newPosition</span>. The updated position of an old vertex is: <span style='font-family:"Calibri Light",sans-serif;background:#E5E5E5;font-style:italic;'>(1 - nu)*original_position + u*original_neighbor_position_sum</span></li>
+                <li>Mark all vertices in the original mesh as old vertices by setting <span style='font-family:"Calibri Light",sans-serif;background:#E5E5E5;font-style:italic;'>old_vertex-&gt;isNew = false</span>.</li>
+            </ol>
+        </li>
+        <li>
+            Compute the updated vertex positions associated with edges, using the loop subdivision rule. (See the &ldquo;New vertex&rdquo; graph above.)<ol style="list-style-type: lower-alpha;">
+                <li>I implement a function, <span style='font-family:"Calibri Light",sans-serif;background:#E5E5E5;font-style:italic;'>newVertexPosition(old_edge)</span>, and store the new position in <span style='font-family:"Calibri Light",sans-serif;background:#E5E5E5;font-style:italic;'>old_edge-&gt;newPosition</span>. The updated position of a new vertex splitting the shared edge (A, B) between a pair of triangle (A, C, B) and (A, B, D) is: <span style='font-family:"Calibri Light",sans-serif;background:#E5E5E5;font-style:italic;'>3/8 * (A + B) + 1/8 * (C + D)</span></li>
+                <li>Mark all edges in the original mesh as old edges by setting <span style='font-family:"Calibri Light",sans-serif;background:#E5E5E5;font-style:italic;'>old_edge-&gt;isNew = false</span>.</li>
+            </ol>
+        </li>
+        <li>
+            Split every edge in the mesh.<ol style="list-style-type: lower-alpha;">
+                <li>Set the position of the new vertex properly.</li>
+                <li>
+                    Set the <span style='font-family:"Calibri Light",sans-serif;background:#E5E5E5;font-style:italic;'>isNew</span> status properly.<ol style="list-style-type: lower-roman;">
+                        <li>The new vertex: <span style='font-family:"Calibri Light",sans-serif;background:#E5E5E5;font-style:italic;'>isNew=true</span>.</li>
+                        <li>After splitting an edge, the edge will now be represented by 2 edges. These subdivided edges that come from splitting an edge in the original mesh should still be marked as old ones: <span style='font-family:"Calibri Light",sans-serif;background:#E5E5E5;font-style:italic;'>isNew=false</span>.</li>
+                        <li>After splitting an edge, 2 new edges will be created. These edges should be marked as new ones: <span style='font-family:"Calibri Light",sans-serif;background:#E5E5E5;font-style:italic;'>isNew=true</span>.</li>
+                    </ol>
+                </li>
+            </ol>
+        </li>
+        <li>Flip any new edge that connects an old and new vertex.</li>
+        <li>The new vertex positions of old vertices were stored in <span style='font-family:"Calibri Light",sans-serif;background:#E5E5E5;font-style:italic;'>old_vertex-&gt;newPosition</span>. Now, update the into <span style='font-family:"Calibri Light",sans-serif;background:#E5E5E5;font-style:italic;'>old_vertex-&gt;newPosition</span> to final <span style='font-family:"Calibri Light",sans-serif;background:#E5E5E5;font-style:italic;'>old_vertex-&gt;position</span>.</li>
+    </ol>
+    <p style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:18px;font-family:"Calibri",sans-serif;'>&nbsp;</p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 143.8pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/6-1.png" align="middle" width="300px" />
+                    </td>
+                    <td style="width: 143.85pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/6-2.png" align="middle" width="300px" />
+                    </td>
+                    <td style="width: 143.85pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/6-3.png" align="middle" width="300px" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:18px;font-family:"Calibri",sans-serif;text-align:center;'>Results of my implementation of loop subdivision.</p>
+    <p style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:18px;font-family:"Calibri",sans-serif;text-align:center;'>&nbsp;</p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 143.85pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/6-4.png" align="middle" width="500px" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:18px;font-family:"Calibri",sans-serif;'>Since I did not implement the edge split operation for boundary edges, the boundary edges are not loop-subdivided here.</p>
+    <p style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:18px;font-family:"Calibri",sans-serif;'>&nbsp;</p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 143.8pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/6-5.png" align="middle" width="250px" />
+                    </td>
+                    <td style="width: 143.85pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/6-6.png" align="middle" width="250px" />
+                    </td>
+                    <td style="width: 143.85pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/6-7.png" align="middle" width="250px" />
+                    </td>
+                    <td style="width: 143.85pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/6-8.png" align="middle" width="250px" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:18px;font-family:"Calibri",sans-serif;'>The cube becomes slightly asymmetric after repeated subdivisions.</p>
+    <p style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:18px;font-family:"Calibri",sans-serif;'>&nbsp;</p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 143.85pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/6-16.png" align="middle" width="250px" />
+                    </td>
+                    <td style="width: 143.85pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/6-17.png" align="middle" width="250px" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:18px;font-family:"Calibri",sans-serif;'>We can pre-process the cube with edge splits so that the cube subdivides symmetrically. For each side of the cube, we split the diagonal edge once so that each side of the cube has 4 triangles.</p>
+    <p style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:18px;font-family:"Calibri",sans-serif;'>&nbsp;</p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 143.8pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/6-10.png" align="middle" width="250px" />
+                    </td>
+                    <td style="width: 143.85pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/6-11.png" align="middle" width="250px" />
+                    </td>
+                    <td style="width: 143.85pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/6-12.png" align="middle" width="250px" />
+                    </td>
+                    <td style="width: 143.85pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/6-13.png" align="middle" width="250px" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:18px;font-family:"Calibri",sans-serif;'>Here are the results.</p>
+    <p style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:18px;font-family:"Calibri",sans-serif;'>&nbsp;</p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 143.85pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/6-22.png" align="middle" width="400px" />
+                    </td>
+                    <td style="width: 143.85pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/6-23.png" align="middle" width="400px" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:18px;font-family:"Calibri",sans-serif;'>The reason causes the cube to become asymmetric after repeated subdivisions if we do not pre-process the cube with edge splits is that the sides of the cube become asymmetric as we perform loop subdivision. The images above are two sides of the cube after one subdivision &ndash; they look different!</p>
+    <p style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:18px;font-family:"Calibri",sans-serif;'>&nbsp;</p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 143.85pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/6-18.png" align="middle" width="400px" />
+                    </td>
+                    <td style="width: 143.85pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/6-19.png" align="middle" width="400px" />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 143.85pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/6-20.png" align="middle" width="400px" />
+                    </td>
+                    <td style="width: 143.85pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/6-21.png" align="middle" width="400px" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:18px;font-family:"Calibri",sans-serif;'>And the images above are 4 corners of the cube after one subdivision &ndash; they also look different!</p>
+    <p style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:18px;font-family:"Calibri",sans-serif;'>&nbsp;</p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 143.85pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/6-24.png" align="middle" width="400px" />
+                    </td>
+                    <td style="width: 143.85pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <img src="images/6-25.png" align="middle" width="400px" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:18px;font-family:"Calibri",sans-serif;'>But if we pre-split the cube properly, you can see that all sides look the same and all corners look the same after repeated subdivisions.</p>
+    <p style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:18px;font-family:"Calibri",sans-serif;'>&nbsp;</p>
+
+
+
+
+
+</body>
