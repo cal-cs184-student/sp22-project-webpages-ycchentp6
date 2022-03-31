@@ -1,7 +1,243 @@
-<html>
-	<head>
-	</head>
-	<body>
-		Project 3-2 here
-	</body>
-</html>
+
+<head>
+    <style>
+        body {
+            padding: 100px;
+            width: 1000px;
+            margin: auto;
+            text-align: left;
+            font-weight: 300;
+            font-family: 'Open Sans', sans-serif;
+            color: #121212;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: 'Source Sans Pro', sans-serif;
+        }
+    </style>
+    <title>CS 184 Pathtracer</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet" />
+</head>
+
+
+
+
+
+
+<body>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:15px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'><strong><span style='font-size:32px;font-family:"Calibri",sans-serif;color:#121212;'>CS 284: Computer Graphics and Imaging, Spring 2022</span></strong></p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:15px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'><strong><span style='font-size:32px;font-family:"Calibri",sans-serif;color:#121212;'>&nbsp;</span></strong></p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:15px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'><strong><span style='font-size:32px;font-family:"Calibri",sans-serif;color:#121212;'>Project 3-2: Pathtracer 2</span></strong></p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:15px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'><strong><span style='font-size:32px;font-family:"Calibri",sans-serif;color:#121212;'>&nbsp;</span></strong></p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:15px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'><strong><span style='font-size:24px;font-family:"Calibri",sans-serif;color:#121212;'>Yi-Chen Chen, p3-2-pathtracer-sp22-chickenfillet</span></strong></p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:15px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'><strong><span style='font-size:24px;font-family:"Calibri",sans-serif;color:#121212;'>&nbsp;</span></strong></p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'>This site is published at:&nbsp;<a href="https://cal-cs184-student.github.io/sp22-project-webpages-ycchentp6/proj3-2/index.html">https://cal-cs184-student.github.io/sp22-project-webpages-ycchentp6/proj3-2/index.html</a>.</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:15px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'><span style='font-size:18px;font-family:"Calibri",sans-serif;color:#121212;'>&nbsp;</span></p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:15px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'><span style='font-size:18px;font-family:"Calibri",sans-serif;color:#121212;'>&nbsp;</span></p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:24px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;font-weight:bold;'>Overview</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>This project is an extension of project 3-1. In this project, I implement mirror and glass materials and microfacet model, i.e., isotropic rough conductors that only reflect.</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:15px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'><strong><span style="font-size:24px;line-height:107%;">Part 1: Mirror and Glass Materials</span></strong></p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'><strong>Show a sequence of six images of scene CBspheres.dae rendered with max_ray_depth set to 0, 1, 2, 3, 4, 5, and 100. The other settings should be at least 64 samples per pixel and 4 samples per light.</strong></p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 215.75pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/1-1.png" align="middle" width="500px" /></p>
+                    </td>
+                    <td style="width: 215.75pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/1-2.png" align="middle" width="500px" /></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 215.75pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>max_ray_depth = 0</p>
+                    </td>
+                    <td style="width: 215.75pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>max_ray_depth = 1</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 215.75pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/1-3.png" align="middle" width="500px" /></p>
+                    </td>
+                    <td style="width: 215.75pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/1-4.png" align="middle" width="500px" /></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 215.75pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>max_ray_depth = 2</p>
+                    </td>
+                    <td style="width: 215.75pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>max_ray_depth = 3</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 215.75pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/1-5.png" align="middle" width="500px" /></p>
+                    </td>
+                    <td style="width: 215.75pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/1-6.png" align="middle" width="500px" /></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 215.75pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>max_ray_depth = 4</p>
+                    </td>
+                    <td style="width: 215.75pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>max_ray_depth = 5</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="width: 431.5pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/1-7.png" align="middle" width="500px" /></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="width: 431.5pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>max_ray_depth = 100</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'>*other parameters: -t 8, -s 64, -l 4, -r 480 360</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'><strong>Point out the new multibounce effects that appear in each image. Explain how these bounce numbers relate to the particular effects that appear.</strong></p>
+    <ul style="list-style-type: disc;margin-left:26px;">
+        <li>m=0: We can only see the light directly comes from the light source (0 bounce).</li>
+        <li>m=1: We start to see the environment and a bit of reflection of light on spheres with 1 bounce. There is 1 bounce from the light bouncing/reflecting off the spheres and towards the camera. So we can see that the glass ball and the mirror ball are mostly black but with a bit of reflection of light.<ol style="list-style-type: circle;">
+                <li>Environment: light &gt; environment &gt; camera</li>
+                <li>Mirror: light &gt; mirror &gt; camera</li>
+                <li>Glass: light &gt; glass &gt; camera</li>
+            </ol>
+        </li>
+        <li>m=2: We start to see reflection with 2 bounces.<ol style="list-style-type: circle;">
+                <li>Environment: When m&gt;=1, environment will become more and more bright because of more bounces of light.</li>
+                <li>Mirror: light &gt; environment &gt; mirror &gt; camera. We start to see the reflection of the environment.</li>
+                <li>Glass: The glass ball is still dark mostly, this is because most rays are refracted when entering the glass ball, and stays inside the ball. Thus we can only observe the light being reflected.</li>
+            </ol>
+        </li>
+        <li>m=3: We start to see refraction and the highlight under the glass sphere (on the ground).<ol style="list-style-type: circle;">
+                <li>Mirror: When m&gt;=2, the mirror ball will become more and more bright because of more bounces of light.</li>
+                <li>Glass: This time we are able to observe refraction on the glass ball as the ray are able to refract twice to get out of the ball and enter the camera. Light &gt; environment &gt; glass refract &gt; glass refract &gt; camera.</li>
+                <li>Highlight: Light &gt; glass refract &gt; glass refract &gt; ground &gt; camera.</li>
+            </ol>
+        </li>
+        <li>m=4: There is a small highlight on the bottom right corner of the purple wall. Light &gt; glass refract &gt; glass reflect &gt; glass refract &gt; wall &gt; camera.</li>
+        <li>m=5: The rendered image become brighter and is reaching a more stable state.</li>
+        <li>m=100: The rendered image become brighter and is reaching a more stable state.</li>
+    </ul>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 552.35pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/1-8.png" align="middle" width="500px" /></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 552.35pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>CBspheres.dae rendered with 1024 samples per pixel, 4 samples per light, and max_ray_depth = 100</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'><strong><span style="font-size:24px;line-height:107%;">Part 2: Microfacet Material</span></strong></p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'><strong>Show a sequence of 4 images of scene CBdragon_microfacet_au.dae rendered with &alpha; set to 0.005, 0.05, 0.25 and 0.5. The other settings should be at least 128 samples per pixel and 1 samples per light. The number of bounces should be at least 5. Describe the differences between different images. Note that, to change the &alpha;, just open the .dae file and search for microfacet.</strong></p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&alpha; represents the roughness of the macro surface. We can see from the images below, the material tends to diffuse when &alpha; is higher, and is more glossy when &alpha; is smaller. As we increase the roughness parameter, the glossiness of the surface is eliminated.</p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 276.15pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/2-1.png" align="middle" width="500px" /></p>
+                    </td>
+                    <td style="width: 276.2pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/2-2.png" align="middle" width="500px" /></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 276.15pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><span style='font-family:  "新細明體",serif;'>&alpha;</span>= 0.005</p>
+                    </td>
+                    <td style="width: 276.2pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><span style='font-family:  "新細明體",serif;'>&alpha;</span>= 0.05</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 276.15pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/2-3.png" align="middle" width="500px" /></p>
+                    </td>
+                    <td style="width: 276.2pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/2-4.png" align="middle" width="500px" /></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 276.15pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><span style='font-family:  "新細明體",serif;'>&alpha;</span>= 0.25</p>
+                    </td>
+                    <td style="width: 276.2pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><span style='font-family:  "新細明體",serif;'>&alpha;</span>= 0.5</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'>*other parameters: -t 8, -s 128, -l 4, -m 5, -r 480 360</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'>&nbsp;</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'><strong>Show two images of scene CBbunny_microfacet_cu.dae rendered using cosine hemisphere sampling (default) and your importance sampling. The sampling rate should be fixed at 64 samples per pixel and 1 samples per light. The number of bounces should be at least 5. Briefly discuss their difference.</strong></p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>The image rendered with importance sampling has less noise since it converges much faster than cosine hemisphere sampling. Incoming rays sampled from the cosine hemisphere sampling distribution are less likely to satisfy the reflection equation for a given half-vector than with the importance sampling scheme.</p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 276.15pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/2-5.png" align="middle" width="500px" /></p>
+                    </td>
+                    <td style="width: 276.2pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/2-6.png" align="middle" width="500px" /></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 276.15pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>cosine hemisphere sampling</p>
+                    </td>
+                    <td style="width: 276.2pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>importance sampling</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'>*other parameters: -t 8, -s 64, -l 1, -m 5, -r 480 360</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'><strong>Show at least one image with some other conductor material, replacing eta and k. Note that you should look up values for real data rather than modifying them arbitrarily. Tell us what kind of material your parameters correspond to.</strong></p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>Rendering zinc dragon using a different set of eta and k parameters.</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>eta = 0.6087 0.6777 1.1063</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>k = 2.5361 4.0122 5.5213</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>alpha = 0.25</p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 552.35pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/2-7.png" align="middle" width="500px" /></p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'>*other parameters: -t 8, -s 1024, -l 4, -m 5, -r 480 360</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+
+</body>
