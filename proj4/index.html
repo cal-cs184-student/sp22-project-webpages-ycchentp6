@@ -1,7 +1,538 @@
-<html>
-	<head>
-	</head>
-	<body>
-		Project 4 here
-	</body>
-</html>
+
+<head>
+    <style>
+        body {
+            padding: 100px;
+            width: 1000px;
+            margin: auto;
+            text-align: left;
+            font-weight: 300;
+            font-family: 'Open Sans', sans-serif;
+            color: #121212;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: 'Source Sans Pro', sans-serif;
+        }
+    </style>
+    <title>CS 184 Clothsim</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet" />
+</head>
+
+
+
+
+
+
+<body>
+    
+
+    <p style='margin-right:0cm;margin-left:0cm;font-size:15px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'><strong><span style='font-size:32px;font-family:"Calibri",sans-serif;color:#121212;'>CS 284: Computer Graphics and Imaging, Spring 2022</span></strong></p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:15px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'><strong><span style='font-size:32px;font-family:"Calibri",sans-serif;color:#121212;'>&nbsp;</span></strong></p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:15px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'><strong><span style='font-size:32px;font-family:"Calibri",sans-serif;color:#121212;'>Project 4: Cloth Sim</span></strong></p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:15px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'><strong><span style='font-size:32px;font-family:"Calibri",sans-serif;color:#121212;'>&nbsp;</span></strong></p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:15px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'><strong><span style='font-size:24px;font-family:"Calibri",sans-serif;color:#121212;'>Yi-Chen Chen, p4-clothsim-sp22-hotpot</span></strong></p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:15px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'><strong><span style='font-size:24px;font-family:"Calibri",sans-serif;color:#121212;'>&nbsp;</span></strong></p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'>This site is published at:&nbsp;<a href="https://cal-cs184-student.github.io/sp22-project-webpages-ycchentp6/proj4/index.html">https://cal-cs184-student.github.io/sp22-project-webpages-ycchentp6/proj4/index.html</a>.</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:15px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'><span style='font-size:18px;font-family:"Calibri",sans-serif;color:#121212;'>&nbsp;</span></p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:15px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;text-align:center;'><span style='font-size:18px;font-family:"Calibri",sans-serif;color:#121212;'>&nbsp;</span></p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:24px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;font-weight:bold;'>Overview</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>In this project, I implement a real-time simulation of cloth using a mass and spring based system. Features included: applying physical constraints on the mass and spring based system, applying numerical integration to simulate the way cloth moves over time, implementing collisions with other objects, implementing self-collisions to prevent cloth clipping, implementing shaders.</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:15px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'><strong><span style="font-size:24px;line-height:107%;">Part 1: Masses and springs</span></strong></p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'><strong>Take some screenshots of scene/pinned2.json from a viewing angle where you can clearly see the cloth wireframe to show the structure of your point masses and springs.</strong></p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 215.75pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/1-1.png" align="middle" width="500px" /></p>
+                    </td>
+                    <td style="width: 215.75pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/1-2.png" align="middle" width="500px" /></p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'><strong>Show us what the wireframe looks like (1) without any shearing constraints, (2) with only shearing constraints, and (3) with all constraints.</strong></p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 184.1pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/1-3.png" align="middle" width="350px" /></p>
+                    </td>
+                    <td style="width: 184.1pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/1-4.png" align="middle" width="350px" /></p>
+                    </td>
+                    <td style="width: 184.15pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/1-5.png" align="middle" width="350px" /></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 184.1pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>pinned2.json with only structural and bending constraints (without shearing constraints)</p>
+                    </td>
+                    <td style="width: 184.1pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>pinned2.json with only shearing constraints</p>
+                    </td>
+                    <td style="width: 184.15pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>pinned2.json with all constraints</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:24px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;font-weight:bold;'>Part 2: Simulation via numerical integration</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'><strong>Experiment with some the parameters in the simulation. To do so, pause the simulation at the start with P, modify the values of interest, and then resume by pressing P again. You can also restart the simulation at any time from the cloth&apos;s starting position by pressing R.</strong></p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 184.1pt;border: 1pt solid windowtext;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>&nbsp;</p>
+                    </td>
+                    <td style="width: 184.1pt;border-top: 1pt solid windowtext;border-right: 1pt solid windowtext;border-bottom: 1pt solid windowtext;border-image: initial;border-left: none;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><strong>Lower</strong></p>
+                    </td>
+                    <td style="width: 184.15pt;border-top: 1pt solid windowtext;border-right: 1pt solid windowtext;border-bottom: 1pt solid windowtext;border-image: initial;border-left: none;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><strong>Higher</strong></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 184.1pt;border-right: 1pt solid windowtext;border-bottom: 1pt solid windowtext;border-left: 1pt solid windowtext;border-image: initial;border-top: none;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:  normal;'><strong>Density</strong> - Controls the effects of gravity</p>
+                    </td>
+                    <td style="width: 184.1pt;border-top: none;border-left: none;border-bottom: 1pt solid windowtext;border-right: 1pt solid windowtext;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:  normal;'>The top middle part of the cloth is higher because it is lighter.</p>
+                    </td>
+                    <td style="width: 184.15pt;border-top: none;border-left: none;border-bottom: 1pt solid windowtext;border-right: 1pt solid windowtext;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:  normal;'>The top middle part of the cloth is lower because it is heavier. However, an even higher density will not change the simulation result much since our constraint on the maximum length of the springs prevents them from being over-extended.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 184.1pt;border-right: 1pt solid windowtext;border-bottom: 1pt solid windowtext;border-left: 1pt solid windowtext;border-image: initial;border-top: none;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:  normal;'><strong>Ks</strong> &ndash; internal forces of the spring (like counterpart to gravity)</p>
+                    </td>
+                    <td style="width: 184.1pt;border-top: none;border-left: none;border-bottom: 1pt solid windowtext;border-right: 1pt solid windowtext;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:  normal;'>A low ks value will cause the cloth to swing more due to gravity.</p>
+                    </td>
+                    <td style="width: 184.15pt;border-top: none;border-left: none;border-bottom: 1pt solid windowtext;border-right: 1pt solid windowtext;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:  normal;'>A higher ks value will constraint the movement of the cloth. It looks like the top middle part of the cloth is being forced to remain it&rsquo;s shape and position instead of being dragged down due to gravity.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 184.1pt;border-right: 1pt solid windowtext;border-bottom: 1pt solid windowtext;border-left: 1pt solid windowtext;border-image: initial;border-top: none;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:  normal;'><strong>Damping</strong> - Controls how much the cloth wobbles</p>
+                    </td>
+                    <td style="width: 184.1pt;border-top: none;border-left: none;border-bottom: 1pt solid windowtext;border-right: 1pt solid windowtext;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:  normal;'>The cloth swings non-stopped.</p>
+                    </td>
+                    <td style="width: 184.15pt;border-top: none;border-left: none;border-bottom: 1pt solid windowtext;border-right: 1pt solid windowtext;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:  normal;'>The cloth barely swing and move very slowly</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 138.05pt;border: 1pt solid windowtext;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>&nbsp;</p>
+                    </td>
+                    <td style="width: 138.1pt;border-top: 1pt solid windowtext;border-right: 1pt solid windowtext;border-bottom: 1pt solid windowtext;border-image: initial;border-left: none;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><strong>Lower</strong></p>
+                    </td>
+                    <td style="width: 138.1pt;border-top: 1pt solid windowtext;border-right: 1pt solid windowtext;border-bottom: 1pt solid windowtext;border-image: initial;border-left: none;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><strong>Default</strong></p>
+                    </td>
+                    <td style="width: 138.1pt;border-top: 1pt solid windowtext;border-right: 1pt solid windowtext;border-bottom: 1pt solid windowtext;border-image: initial;border-left: none;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><strong>Higher</strong></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 138.05pt;border-right: 1pt solid windowtext;border-bottom: 1pt solid windowtext;border-left: 1pt solid windowtext;border-image: initial;border-top: none;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><strong>Density</strong></p>
+                    </td>
+                    <td style="width: 138.1pt;border-top: none;border-left: none;border-bottom: 1pt solid windowtext;border-right: 1pt solid windowtext;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/2-2.png" align="middle" width="300px" /></p>
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>Density = 1 g/cm^2</p>
+                    </td>
+                    <td rowspan="3" style="width: 138.1pt;border-top: none;border-left: none;border-bottom: 1pt solid windowtext;border-right: 1pt solid windowtext;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>.</p>
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>.</p>
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>.</p>
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>.</p>
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>.</p>
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>.</p>
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>.</p>
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>.</p>
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>.</p>
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>.</p>
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>.</p>
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>.</p>
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/2-1.png" align="middle" width="300px" /></p>
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>Density = 15 g/cm^2</p>
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>Ks = 5000 N/m</p>
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>Damping = 0.2%</p>
+                    </td>
+                    <td style="width: 138.1pt;border-top: none;border-left: none;border-bottom: 1pt solid windowtext;border-right: 1pt solid windowtext;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/2-3.png" align="middle" width="300px" /></p>
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>Density = 10000 g/cm^2</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 138.05pt;border-right: 1pt solid windowtext;border-bottom: 1pt solid windowtext;border-left: 1pt solid windowtext;border-image: initial;border-top: none;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><strong>Ks</strong></p>
+                    </td>
+                    <td style="width: 138.1pt;border-top: none;border-left: none;border-bottom: 1pt solid windowtext;border-right: 1pt solid windowtext;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/2-4.png" align="middle" width="300px" /></p>
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>Ks = 5 N/m</p>
+                    </td>
+                    <td style="width: 138.1pt;border-top: none;border-left: none;border-bottom: 1pt solid windowtext;border-right: 1pt solid windowtext;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/2-5.png" align="middle" width="300px" /></p>
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>Ks = 500000 N/m</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 138.05pt;border-right: 1pt solid windowtext;border-bottom: 1pt solid windowtext;border-left: 1pt solid windowtext;border-image: initial;border-top: none;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><strong>Damping</strong></p>
+                    </td>
+                    <td style="width: 138.1pt;border-top: none;border-left: none;border-bottom: 1pt solid windowtext;border-right: 1pt solid windowtext;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/2-6.png" align="middle" width="300px" /></p>
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>Damping = 0 %</p>
+                    </td>
+                    <td style="width: 138.1pt;border-top: none;border-left: none;border-bottom: 1pt solid windowtext;border-right: 1pt solid windowtext;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/2-7.png" align="middle" width="300px" /></p>
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>Damping = 1 %</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'><strong>Show us a screenshot of your shaded cloth from scene/pinned4.json in its final resting state!</strong></p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 552.35pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/2-8.png" align="middle" width="500px" /></p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:24px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;font-weight:bold;'>Part 3: Handling collisions with other objects</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'><strong>Show us screenshots of your shaded cloth from scene/sphere.json in its final resting state on the sphere using the default ks = 5000 as well as with ks = 500 and ks = 50000. Describe the differences in the results.</strong></p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>The smaller ks is, the more the cloth will dangle from the sphere. If ks is larger, the internal force from the springs holds the cloth from dangling more. We can see from my results that in the left most image, there are self-collisions. Self-collisions also happen during the simulation of the middle and the right image, but it is just not shown in the final rest stage.</p>
+    <table style="border-collapse:collapse;border:none;">
+        <tbody>
+            <tr>
+                <td style="width: 184.1pt;padding: 0cm 5.4pt;vertical-align: top;">
+                    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/3-1.png" align="middle" width="350px" /></p>
+                </td>
+                <td style="width: 184.1pt;padding: 0cm 5.4pt;vertical-align: top;">
+                    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/3-2.png" align="middle" width="350px" /></p>
+                </td>
+                <td style="width: 184.15pt;padding: 0cm 5.4pt;vertical-align: top;">
+                    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/3-3.png" align="middle" width="350px" /></p>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 184.1pt;padding: 0cm 5.4pt;vertical-align: top;">
+                    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>Ks = 500</p>
+                </td>
+                <td style="width: 184.1pt;padding: 0cm 5.4pt;vertical-align: top;">
+                    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>Ks = 5000</p>
+                </td>
+                <td style="width: 184.15pt;padding: 0cm 5.4pt;vertical-align: top;">
+                    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>Ks = 50000</p>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'><strong>Show us a screenshot of your shaded cloth lying peacefully at rest on the plane.&nbsp;</strong></p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 552.35pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/3-4.png" align="middle" width="500px" /></p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:24px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;font-weight:bold;'>Part 4: Handling self-collisions</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'><strong>Show us at least 3 screenshots that document how your cloth falls and folds on itself, starting with an early, initial self-collision and ending with the cloth at a more restful state (even if it is still slightly bouncy on the ground).</strong></p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 184.1pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/4-1.png" align="middle" width="350px" /></p>
+                    </td>
+                    <td style="width: 184.1pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/4-2.png" align="middle" width="350px" /></p>
+                    </td>
+                    <td style="width: 184.15pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/4-3.png" align="middle" width="350px" /></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 184.1pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>Early state</p>
+                    </td>
+                    <td style="width: 184.1pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>Later state</p>
+                    </td>
+                    <td style="width: 184.15pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>Restful state</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'><strong>Vary the density as well as ks and describe with words and screenshots how they affect the behavior of the cloth as it falls on itself.</strong></p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>The effects that Ks and density cause on the cloth are kind of opposite to each other.</p>
+    <ul style="list-style-type: disc;margin-left:26px;">
+        <li>Higher density / Lower ks: the cloth folds faster and has more number of folds.</li>
+        <li>Lower density / Higher ks: the cloth has less number of folds and tend to preserve its original shape.</li>
+    </ul>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 276.15pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/4-4.png" align="middle" width="500px" /></p>
+                    </td>
+                    <td style="width: 276.2pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/4-5.png" align="middle" width="500px" /></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 276.15pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>Higher density (5000 g/cm^2)</p>
+                    </td>
+                    <td style="width: 276.2pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>Lower density (5 g/cm^2)</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 276.15pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/4-7.png" align="middle" width="500px" /></p>
+                    </td>
+                    <td style="width: 276.2pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/4-6.png" align="middle" width="500px" /></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 276.15pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>Higher ks (500000 N/m)</p>
+                    </td>
+                    <td style="width: 276.2pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>Lower ks (5 N/m)</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:24px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;font-weight:bold;'>Part 5: Shaders</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'><strong>Explain in your own words what is a shader program and how vertex and fragment shaders work together to create lighting and material effects.</strong></p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>A shader program is a program that runs in the graphic pipeline and tells the computer how to render each pixel. It is used to control lighting and shading effects. Vertex shader describe the attributes (positions, normal vector, etc) of a vertex and sends this information to fragment shader. Fragment shader takes in the information from vertex shader and renders/shades a fragment/pixel based on lightings, materials, and other conditions.</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'><strong>Explain the Blinn-Phong shading model in your own words. Show a screenshot of your Blinn-Phong shader outputting only the ambient component, a screen shot only outputting the diffuse component, a screen shot only outputting the specular component, and one using the entire Blinn-Phong model.</strong></p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>Blinn-Phong shading model is a combination of specular highlights, diffuse reflection, and ambient lighting. Specular highlights is highly view dependent - as you move your view position, the specular highlights on the surface move over the surface quickly. Diffuse reflection does not dependent on your view point. Ambient lighting is like a hack to make things not look totally dark in the black. Here are nice slides that show you how the three component contribute to the whole Blinn-Phong model.</p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 276.15pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/5-1.jpg" align="middle" width="500px" /></p>
+                    </td>
+                    <td style="width: 276.2pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/5-2.jpg" align="middle" width="500px" /></p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 184.1pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/5-3.png" align="middle" width="300px" /></p>
+                    </td>
+                    <td style="width: 184.1pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/5-4.png" align="middle" width="300px" /></p>
+                    </td>
+                    <td style="width: 184.15pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/5-5.png" align="middle" width="300px" /></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 184.1pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>ambient component only</p>
+                    </td>
+                    <td style="width: 184.1pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>diffuse component only</p>
+                    </td>
+                    <td style="width: 184.15pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>specular component only</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 552.35pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/5-6.png" align="middle" width="500px" /></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 552.35pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>Blinn-Phong model = ambient component + diffuse component + specular component</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'><strong>Show a screenshot of your texture mapping shader using your own custom texture by modifying the textures in /textures/.</strong></p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 276.15pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/5-7.png" align="middle" width="335px" /></p>
+                    </td>
+                    <td style="width: 276.2pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/5-8.png" align="middle" width="500px" /></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 276.15pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>My texture</p>
+                    </td>
+                    <td style="width: 276.2pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>Texture mapping result</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'><strong>Show a screenshot of bump mapping on the cloth and on the sphere. Show a screenshot of displacement mapping on the sphere. Use the same texture for both renders. You can either provide your own texture or use one of the ones in the textures directory, BUT choose one that&apos;s not the default texture_2.png. Compare the two approaches and resulting renders in your own words. Compare how the two shaders react to the sphere by changing the sphere mesh&apos;s coarseness by using -o 16 -a 16 and then -o 128 -a 128.</strong></p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>For displacement mapping, when the mesh of the sphere is more coarse, the vertices are undersampling the texture. There aren&apos;t enough vertices to sample the jump in height in the texture. When the mesh of the sphere has a higher resolution, the jumps in height in texture is sampled better and we are able to see more details. For bump mapping, the differences between higher or lower resolutions spheres are much smaller compared to displacement mapping. Visually, bumping mapping seems to perform better than displacement mapping with lower sampling rate. (I think the texture I picked is not good as it has texture of the stones itself and cracks between stones.)</p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 276.15pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/5-9.png" align="middle" width="365px" /></p>
+                    </td>
+                    <td style="width: 276.2pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/5-10.png" align="middle" width="500px" /></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 276.15pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>Texture image</p>
+                    </td>
+                    <td style="width: 276.2pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>Bump mapping on the cloth</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 276.15pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/5-11.png" align="middle" width="500px" /></p>
+                    </td>
+                    <td style="width: 276.2pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/5-12.png" align="middle" width="500px" /></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 276.15pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>Bump mapping on the sphere, higher resolution</p>
+                    </td>
+                    <td style="width: 276.2pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>Bump mapping on the sphere, lower resolution</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 276.15pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/5-13.png" align="middle" width="500px" /></p>
+                    </td>
+                    <td style="width: 276.2pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/5-14.png" align="middle" width="500px" /></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 276.15pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>Displacement mapping on the sphere, higher resolution</p>
+                    </td>
+                    <td style="width: 276.2pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>Displacement mapping on the shpere, lower resolution</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'><strong>Show a screenshot of your mirror shader on the cloth and on the sphere.</strong></p>
+    <div align="center" style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:0cm;line-height:107%;font-size:15px;font-family:"Calibri",sans-serif;'>
+        <table style="border-collapse:collapse;border:none;">
+            <tbody>
+                <tr>
+                    <td style="width: 276.15pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/5-15.png" align="middle" width="500px" /></p>
+                    </td>
+                    <td style="width: 276.2pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'><img src="images/5-16.png" align="middle" width="500px" /></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 276.15pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>Mirror shader on the cloth</p>
+                    </td>
+                    <td style="width: 276.2pt;padding: 0cm 5.4pt;vertical-align: top;">
+                        <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:.0001pt;line-height:normal;text-align:center;'>Mirror shader on the sphere</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+    <p style='margin-right:0cm;margin-left:0cm;font-size:18px;font-family:"Calibri",sans-serif;margin-top:0cm;margin-bottom:8.0pt;line-height:107%;'>&nbsp;</p>
+
+
+</body>
